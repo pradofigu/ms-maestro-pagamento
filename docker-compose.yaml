@@ -1,0 +1,65 @@
+version: '3.7'
+
+services:
+  app:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: maestro-payment
+    ports:
+      - "5001:8080"
+    depends_on:
+      - maestro-db
+      - maestro-message-broker
+    networks:
+      - maestro-payment-network
+      
+  maestro-db:
+    image: postgres
+    restart: always
+    ports:
+      - '52054:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dev_paymentservice
+    volumes:
+      - maestro-payment-db-data:/var/lib/postgresql/data
+    networks:
+      - maestro-payment-network
+
+  maestro-message-broker:
+    image: masstransit/rabbitmq
+    restart: always
+    ports:
+      - '52053:15672' # RabbitMQ Management UI
+      - '52052:5672' # RabbitMQ Broker
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - maestro-payment-network
+
+  maestro-jaeger:
+    image: jaegertracing/all-in-one:latest
+#    port mappings: https://www.jaegertracing.io/docs/1.32/getting-started/
+    ports:
+      - "52062:5775/udp"
+      - "52061:6831/udp"
+      - "52063:6832/udp"
+      - "52064:5778"
+      - "52065:16686"
+      - "52066:14250"
+      - "52067:14268"
+      - "52068:14269"
+      - "52069:9411"
+    networks:
+      - maestro-payment-network
+        
+volumes:
+  maestro-payment-db-data:
+
+networks:
+  maestro-payment-network:
