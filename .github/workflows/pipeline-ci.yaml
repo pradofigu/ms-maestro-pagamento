@@ -1,0 +1,40 @@
+name: Pipeline CI
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+
+env:
+  STAGE: ${{ inputs.stage }}
+  AWS_ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '8.0.x' ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Unit Test
+        working-directory: PaymentService/tests/PaymentService.UnitTests
+        run: dotnet test --no-restore --verbosity minimal
+      - name: Functional Test
+        working-directory: PaymentService/tests/PaymentService.FunctionalTests
+        run: dotnet test --no-restore --verbosity minimal
+      - name: Integration Test
+        working-directory: PaymentService/tests/PaymentService.IntegrationTests
+        run: dotnet test --no-restore --verbosity minimal
