@@ -1,0 +1,14 @@
+name: Pipeline - HOM
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review, edited, synchronize]
+    branches: [develop, release/**]
+
+jobs:
+  build:
+    name: CI
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/pipeline-ci.yaml
+    with:
+      stage: hom      

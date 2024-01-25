@@ -1,0 +1,20 @@
+name: Pipeline CD
+
+on:
+  workflow_call:
+    inputs:
+      stage:
+        required: true
+        type: string
+
+env:
+  STAGE: ${{ inputs.stage }}
+  AWS_ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+  AWS_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo Message
+        run: echo "Hello, GitHub Actions!"
