@@ -11,4 +11,6 @@ jobs:
     if: github.event.pull_request.draft == false
     uses: ./.github/workflows/pipeline-ci.yaml
     with:
-      stage: hom      
+      stage: hom
+    secrets:
+      sonar-token-payment: ${{ secrets.SONAR_TOKEN_PAYMENT }}
