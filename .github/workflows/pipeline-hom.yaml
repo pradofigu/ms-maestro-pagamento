@@ -14,3 +14,10 @@ jobs:
       stage: hom
     secrets:
       sonar-token-payment: ${{ secrets.SONAR_TOKEN_PAYMENT }}
+      
+  deploy:
+    name: CD
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/pipeline-cd.yaml
+    with:
+      stage: hom
