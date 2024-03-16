@@ -1,29 +1,17 @@
 namespace PaymentService.Controllers.v1;
 
-using PaymentService.Domain.Payments.Features;
-using PaymentService.Domain.Payments.Dtos;
-using PaymentService.Resources;
+using Domain.Payments.Features;
+using Domain.Payments.Dtos;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
-using System.Threading;
 using MediatR;
 
 [ApiController]
 [Route("api/payments")]
 [ApiVersion("1.0")]
-public sealed class PaymentsController: ControllerBase
+public sealed class PaymentsController(ISender mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public PaymentsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-    
-
     /// <summary>
     /// Webhook for Payment Received
     /// </summary>
@@ -40,7 +28,7 @@ public sealed class PaymentsController: ControllerBase
     public async Task<ActionResult<PaymentDto>> GetPayment(Guid paymentId)
     {
         var query = new GetPayment.Query(paymentId);
-        var queryResponse = await _mediator.Send(query);
+        var queryResponse = await mediator.Send(query);
         return Ok(queryResponse);
     }
 
@@ -52,7 +40,7 @@ public sealed class PaymentsController: ControllerBase
     public async Task<IActionResult> GetPayments([FromQuery] PaymentParametersDto paymentParametersDto)
     {
         var query = new GetPaymentList.Query(paymentParametersDto);
-        var queryResponse = await _mediator.Send(query);
+        var queryResponse = await mediator.Send(query);
 
         var paginationMetadata = new
         {
@@ -67,11 +55,10 @@ public sealed class PaymentsController: ControllerBase
             hasNext = queryResponse.HasNext
         };
 
-        Response.Headers.Add("X-Pagination",
-            JsonSerializer.Serialize(paginationMetadata));
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
         return Ok(queryResponse);
     }
-
+    
     // endpoint marker - do not delete this comment
 }

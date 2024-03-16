@@ -4,6 +4,11 @@
         <name>PaymentService</name>
     </assembly>
     <members>
+        <member name="M:PaymentService.Controllers.v1.PaymentsController.AddOrder(PaymentService.Domain.Payments.Dtos.PaymentForWebHookCreationDto)">
+            <summary>
+            Webhook for Payment Received
+            </summary>
+        </member>
         <member name="M:PaymentService.Controllers.v1.PaymentsController.GetPayment(System.Guid)">
             <summary>
             Gets a single Payment by ID.
