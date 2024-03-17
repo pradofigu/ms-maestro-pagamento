@@ -1,3 +1,5 @@
+using PaymentService.Domain;
+
 namespace PaymentService.Controllers.v1;
 
 using Domain.Payments.Features;
@@ -18,7 +20,9 @@ public sealed class PaymentsController(ISender mediator) : ControllerBase
     [HttpPost("webhook", Name = "WebHookPayment")]
     public async Task<ActionResult> AddOrder([FromBody]PaymentForWebHookCreationDto paymentForWebHookCreationDto)
     {
-        return await Task.FromResult(Ok());
+        var command = new CheckPayment.Command(paymentForWebHookCreationDto);
+        await mediator.Send(command);
+        return NoContent();
     }
     
     /// <summary>

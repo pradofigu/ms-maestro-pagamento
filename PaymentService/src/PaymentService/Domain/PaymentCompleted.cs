@@ -25,7 +25,10 @@ public static class PaymentCompleted
 
         public async Task<bool> Handle(PaymentCompletedCommand request, CancellationToken cancellationToken)
         {
-            await _publishEndpoint.Publish<IPaymentCompleted>(new { });
+            await _publishEndpoint.Publish<IPaymentCompleted>(new
+            {
+                CorrelationId = Guid.NewGuid().ToString()
+            });
 
             return true;
         }
