@@ -15,10 +15,24 @@ using MediatR;
 public sealed class PaymentsController(ISender mediator) : ControllerBase
 {
     /// <summary>
+    /// Creates a new Payment record.
+    /// </summary>
+    [HttpPost(Name = "AddPayment")]
+    public async Task<ActionResult<PaymentDto>> AddPayment([FromBody]PaymentForCreationDto paymentForCreation)
+    {
+        var command = new AddPayment.Command(paymentForCreation);
+        var commandResponse = await mediator.Send(command);
+
+        return CreatedAtRoute("GetPayment",
+            new { paymentId = commandResponse.Id },
+            commandResponse);
+    }
+    
+    /// <summary>
     /// Webhook for Payment Received
     /// </summary>
     [HttpPost("webhook", Name = "WebHookPayment")]
-    public async Task<ActionResult> AddOrder([FromBody]PaymentForWebHookCreationDto paymentForWebHookCreationDto)
+    public async Task<ActionResult> WebHookPayment([FromBody]PaymentForWebHookCreationDto paymentForWebHookCreationDto)
     {
         var command = new CheckPayment.Command(paymentForWebHookCreationDto);
         await mediator.Send(command);
@@ -62,6 +76,17 @@ public sealed class PaymentsController(ISender mediator) : ControllerBase
         Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
         return Ok(queryResponse);
+    }
+    
+    /// <summary>
+    /// Updates an entire existing Payment.
+    /// </summary>
+    [HttpPut("{paymentId:guid}", Name = "UpdatePayment")]
+    public async Task<IActionResult> UpdatePayment(Guid paymentId, PaymentForUpdateDto payment)
+    {
+        var command = new UpdatePayment.Command(paymentId, payment);
+        await mediator.Send(command);
+        return NoContent();
     }
     
     // endpoint marker - do not delete this comment

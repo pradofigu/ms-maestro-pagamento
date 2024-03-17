@@ -2,11 +2,7 @@
 
 public class PaymentForWebHookCreationDto
 {
-    public bool Success { get; set; }
-    public Guid TransactionId { get; set; }
-    public string Message { get; set; }
-    public decimal AmountCharged { get; set; }
-    public DateTime Timestamp { get; set; }
+    public Guid? CorrelationId { get; set; }
     public string CardNumber { get; set; }
     public string CardToken { get; set; }
     public string CardHolderName { get; set; }
@@ -15,4 +11,9 @@ public class PaymentForWebHookCreationDto
     public decimal TotalAmount { get; set; }
     public string Currency { get; set; }
     public string Status { get; set; }
+    public bool Success { get; set; }
+    public Guid TransactionId { get; set; }
+    public string Message { get; set; }
+    public decimal AmountCharged { get; set; }
+    public DateTime Timestamp { get; set; }
 }

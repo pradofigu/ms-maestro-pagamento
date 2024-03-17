@@ -1,3 +1,5 @@
+using PaymentService.Domain.Payments;
+
 namespace PaymentService.Domain;
 
 using SharedKernel.Messages;
@@ -10,7 +12,7 @@ using PaymentService.Databases;
 
 public static class PaymentCompleted
 {
-    public sealed record PaymentCompletedCommand() : IRequest<bool>;
+    public sealed record PaymentCompletedCommand(Payment Payment) : IRequest<bool>;
 
     public sealed class Handler : IRequestHandler<PaymentCompletedCommand, bool>
     {

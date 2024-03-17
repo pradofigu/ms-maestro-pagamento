@@ -4,7 +4,12 @@
         <name>PaymentService</name>
     </assembly>
     <members>
-        <member name="M:PaymentService.Controllers.v1.PaymentsController.AddOrder(PaymentService.Domain.Payments.Dtos.PaymentForWebHookCreationDto)">
+        <member name="M:PaymentService.Controllers.v1.PaymentsController.AddPayment(PaymentService.Domain.Payments.Dtos.PaymentForCreationDto)">
+            <summary>
+            Creates a new Payment record.
+            </summary>
+        </member>
+        <member name="M:PaymentService.Controllers.v1.PaymentsController.WebHookPayment(PaymentService.Domain.Payments.Dtos.PaymentForWebHookCreationDto)">
             <summary>
             Webhook for Payment Received
             </summary>
@@ -17,6 +22,11 @@
         <member name="M:PaymentService.Controllers.v1.PaymentsController.GetPayments(PaymentService.Domain.Payments.Dtos.PaymentParametersDto)">
             <summary>
             Gets a list of all Payments.
+            </summary>
+        </member>
+        <member name="M:PaymentService.Controllers.v1.PaymentsController.UpdatePayment(System.Guid,PaymentService.Domain.Payments.Dtos.PaymentForUpdateDto)">
+            <summary>
+            Updates an entire existing Payment.
             </summary>
         </member>
         <member name="M:PaymentService.Databases.EntityConfigurations.PaymentConfiguration.Configure(Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder{PaymentService.Domain.Payments.Payment})">
@@ -69,6 +79,18 @@
             <inheritdoc />
         </member>
         <member name="M:PaymentService.Migrations.InitialMigration.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:PaymentService.Migrations.AddCorrelationId">
+            <inheritdoc />
+        </member>
+        <member name="M:PaymentService.Migrations.AddCorrelationId.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:PaymentService.Migrations.AddCorrelationId.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:PaymentService.Migrations.AddCorrelationId.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
     </members>

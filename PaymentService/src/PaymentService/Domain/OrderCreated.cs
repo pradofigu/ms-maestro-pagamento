@@ -16,8 +16,6 @@ public sealed class OrderCreated : IConsumer<IOrderCreated>
 
     public Task Consume(ConsumeContext<IOrderCreated> context)
     {
-        // do work here
-
         return Task.CompletedTask;
     }
 }

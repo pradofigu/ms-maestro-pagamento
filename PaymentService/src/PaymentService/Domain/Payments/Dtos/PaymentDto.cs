@@ -4,6 +4,7 @@ using Destructurama.Attributed;
 
 public sealed record PaymentDto
 {
+    public Guid? CorrelationId { get; set; }
     public Guid Id { get; set; }
     public string CardNumber { get; set; }
     public string CardToken { get; set; }
