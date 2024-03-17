@@ -18,6 +18,7 @@ public sealed class PaymentsController(ISender mediator) : ControllerBase
     /// Creates a new Payment record.
     /// </summary>
     [HttpPost(Name = "AddPayment")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<ActionResult<PaymentDto>> AddPayment([FromBody]PaymentForCreationDto paymentForCreation)
     {
         var command = new AddPayment.Command(paymentForCreation);
