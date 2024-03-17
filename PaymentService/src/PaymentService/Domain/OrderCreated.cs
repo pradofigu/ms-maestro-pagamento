@@ -1,25 +1,29 @@
 using PaymentService.Domain.Payments;
 using PaymentService.Domain.Payments.Dtos;
+using PaymentService.Domain.Payments.Mappings;
+using PaymentService.Domain.Payments.Services;
+using PaymentService.Services;
 
 namespace PaymentService.Domain;
 
 using MassTransit;
 using SharedKernel.Messages;
 using System.Threading.Tasks;
-using PaymentService.Databases;
 
 public sealed class OrderCreated : IConsumer<IOrderCreated>
 {
-    private readonly PaymentDbContext _db;
+    private readonly IPaymentRepository _paymentRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public OrderCreated(PaymentDbContext db)
+    public OrderCreated(IPaymentRepository paymentRepository, IUnitOfWork unitOfWork)
     {
-        _db = db;
+        _paymentRepository = paymentRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public Task Consume(ConsumeContext<IOrderCreated> context)
+    public async Task Consume(ConsumeContext<IOrderCreated> context)
     {
-        var payment = new PaymentForCreationDto
+        var request = new PaymentForCreationDto
         {
             CorrelationId = context.Message.CorrelationId,
             CardNumber = context.Message.CardNumber,
@@ -30,9 +34,12 @@ public sealed class OrderCreated : IConsumer<IOrderCreated>
             TotalAmount = context.Message.TotalAmount,
             Currency = context.Message.Currency,
             Status = context.Message.Status,
-            
         };
         
-        return Task.CompletedTask;
+        var paymentToAdd = request.ToPaymentForCreation();
+        var payment = Payment.Create(paymentToAdd);
+
+        await _paymentRepository.Add(payment);
+        await _unitOfWork.CommitChanges();
     }
 }

@@ -9,7 +9,6 @@ namespace SharedKernel.Messages
         public int Number { get; set; }
         public string Status { get; set; }
         public decimal TotalAmount { get; set; }
-        public string DiscountCode { get; set; }
         public string CardNumber { get; set; }
         public string CardToken { get; set; }
         public string CardHolderName { get; set; }
@@ -25,7 +24,6 @@ namespace SharedKernel.Messages
         public int Number { get; set; }
         public string Status { get; set; }
         public decimal TotalAmount { get; set; }
-        public string DiscountCode { get; set; }
         public string CardNumber { get; set; }
         public string CardToken { get; set; }
         public string CardHolderName { get; set; }
