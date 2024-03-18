@@ -83,6 +83,7 @@ public sealed class PaymentsController(ISender mediator) : ControllerBase
     /// Updates an entire existing Payment.
     /// </summary>
     [HttpPut("{paymentId:guid}", Name = "UpdatePayment")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<IActionResult> UpdatePayment(Guid paymentId, PaymentForUpdateDto payment)
     {
         var command = new UpdatePayment.Command(paymentId, payment);
