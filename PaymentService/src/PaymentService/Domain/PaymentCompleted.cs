@@ -17,7 +17,7 @@ public static class PaymentCompleted
     {
         private readonly IPublishEndpoint _publishEndpoint;
 
-        public Handler(PaymentDbContext db, IPublishEndpoint publishEndpoint)
+        public Handler(IPublishEndpoint publishEndpoint)
         {
             _publishEndpoint = publishEndpoint;
         }
