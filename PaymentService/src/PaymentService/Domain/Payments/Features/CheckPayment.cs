@@ -25,7 +25,7 @@ public static class CheckPayment
         
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            var paymentToUpdate = await _paymentRepository.GetById(request.PaymentForWebHook.TransactionId, cancellationToken: cancellationToken);
+            var paymentToUpdate = await _paymentRepository.GetByCorrelationIdAsync(request.PaymentForWebHook.TransactionId, cancellationToken: cancellationToken);
             var paymentToAdd = request.PaymentForWebHook.ToPaymentForWebHookUpdate();
             paymentToUpdate.Update(paymentToAdd);
             
