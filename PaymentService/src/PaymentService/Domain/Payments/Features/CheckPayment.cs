@@ -35,7 +35,8 @@ public static class CheckPayment
             if (request.PaymentForWebHook.Success)
             {
                 var commandPaymentComplete = new PaymentCompleted.PaymentCompletedCommand(paymentToUpdate);
-                await _mediator.Send(commandPaymentComplete, cancellationToken);    
+                await _mediator.Send(commandPaymentComplete, cancellationToken);
+                return;
             }
             
             var commandPaymentCanceled = new PaymentRefused.PaymentRefusedCommand(paymentToUpdate);
