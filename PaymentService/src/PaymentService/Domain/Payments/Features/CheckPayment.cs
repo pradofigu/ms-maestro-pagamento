@@ -32,9 +32,14 @@ public static class CheckPayment
             _paymentRepository.Update(paymentToUpdate);
             await _unitOfWork.CommitChanges(cancellationToken);
             
-            //TODO: Add to Domain Event
-            var command = new PaymentCompleted.PaymentCompletedCommand(paymentToUpdate);
-            await _mediator.Send(command, cancellationToken);
+            if (request.PaymentForWebHook.Success)
+            {
+                var commandPaymentComplete = new PaymentCompleted.PaymentCompletedCommand(paymentToUpdate);
+                await _mediator.Send(commandPaymentComplete, cancellationToken);    
+            }
+            
+            var commandPaymentCanceled = new PaymentRefused.PaymentRefusedCommand(paymentToUpdate);
+            await _mediator.Send(commandPaymentCanceled, cancellationToken);
         }
     }
 }
