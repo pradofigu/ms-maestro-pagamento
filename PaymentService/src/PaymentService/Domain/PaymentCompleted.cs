@@ -7,7 +7,6 @@ using MassTransit;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
-using PaymentService.Databases;
 
 public static class PaymentCompleted
 {
