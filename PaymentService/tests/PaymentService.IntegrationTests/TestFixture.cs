@@ -1,3 +1,5 @@
+using MassTransit;
+
 namespace PaymentService.IntegrationTests;
 
 using PaymentService.Extensions.Services;
@@ -56,6 +58,7 @@ public class TestFixture : IAsyncLifetime
         // add any mock services here
         services.ReplaceServiceWithSingletonMock<IHttpContextAccessor>();
         services.ReplaceServiceWithSingletonMock<IBackgroundJobClient>();
+        services.ReplaceServiceWithSingletonMock<IPublishEndpoint>();
 
         var provider = services.BuildServiceProvider();
         BaseScopeFactory = provider.GetService<IServiceScopeFactory>();
