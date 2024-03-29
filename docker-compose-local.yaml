@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dev_paymentservice
+      POSTGRES_DB: MS-002-PAYMENT
     volumes:
       - maestro-payment-db-data:/var/lib/postgresql/data
     networks:

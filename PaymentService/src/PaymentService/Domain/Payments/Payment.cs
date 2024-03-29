@@ -10,6 +10,8 @@ using PaymentService.Domain.Payments.DomainEvents;
 
 public class Payment : BaseEntity
 {
+    public Guid CorrelationId { get; private set; }
+    
     public string CardNumber { get; private set; }
 
     public string CardToken { get; private set; }
@@ -27,12 +29,12 @@ public class Payment : BaseEntity
     public string Status { get; private set; }
 
     // Add Props Marker -- Deleting this comment will cause the add props utility to be incomplete
-
-
+    
     public static Payment Create(PaymentForCreation paymentForCreation)
     {
         var newPayment = new Payment();
 
+        newPayment.CorrelationId = paymentForCreation.CorrelationId ?? Guid.NewGuid();
         newPayment.CardNumber = paymentForCreation.CardNumber;
         newPayment.CardToken = paymentForCreation.CardToken;
         newPayment.CardHolderName = paymentForCreation.CardHolderName;
@@ -49,6 +51,7 @@ public class Payment : BaseEntity
 
     public Payment Update(PaymentForUpdate paymentForUpdate)
     {
+        CorrelationId = paymentForUpdate.CorrelationId;
         CardNumber = paymentForUpdate.CardNumber;
         CardToken = paymentForUpdate.CardToken;
         CardHolderName = paymentForUpdate.CardHolderName;
@@ -57,6 +60,14 @@ public class Payment : BaseEntity
         TotalAmount = paymentForUpdate.TotalAmount;
         Currency = paymentForUpdate.Currency;
         Status = paymentForUpdate.Status;
+
+        QueueDomainEvent(new PaymentUpdated(){ Id = Id });
+        return this;
+    }
+    
+    public Payment Update(PaymentForWebHookCreation paymentForWebHookCreation)
+    {
+        Status = paymentForWebHookCreation.Success ? "Finalizada" : "Cancelada";
 
         QueueDomainEvent(new PaymentUpdated(){ Id = Id });
         return this;

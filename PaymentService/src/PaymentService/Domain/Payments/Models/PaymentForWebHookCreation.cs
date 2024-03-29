@@ -1,6 +1,6 @@
-﻿namespace PaymentService.Domain.Payments.Dtos;
+﻿namespace PaymentService.Domain.Payments.Models;
 
-public class PaymentForWebHookCreationDto
+public class PaymentForWebHookCreation
 {
     public Guid TransactionId { get; set; }
     public string Message { get; set; }

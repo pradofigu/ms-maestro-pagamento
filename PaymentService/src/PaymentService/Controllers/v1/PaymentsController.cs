@@ -1,36 +1,43 @@
+using PaymentService.Domain;
+
 namespace PaymentService.Controllers.v1;
 
-using PaymentService.Domain.Payments.Features;
-using PaymentService.Domain.Payments.Dtos;
-using PaymentService.Resources;
+using Domain.Payments.Features;
+using Domain.Payments.Dtos;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Threading.Tasks;
-using System.Threading;
 using MediatR;
 
 [ApiController]
 [Route("api/payments")]
 [ApiVersion("1.0")]
-public sealed class PaymentsController: ControllerBase
+public sealed class PaymentsController(ISender mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public PaymentsController(IMediator mediator)
+    /// <summary>
+    /// Creates a new Payment record.
+    /// </summary>
+    [HttpPost(Name = "AddPayment")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<ActionResult<PaymentDto>> AddPayment([FromBody]PaymentForCreationDto paymentForCreation)
     {
-        _mediator = mediator;
+        var command = new AddPayment.Command(paymentForCreation);
+        var commandResponse = await mediator.Send(command);
+
+        return CreatedAtRoute("GetPayment",
+            new { paymentId = commandResponse.Id },
+            commandResponse);
     }
     
-
     /// <summary>
     /// Webhook for Payment Received
     /// </summary>
     [HttpPost("webhook", Name = "WebHookPayment")]
-    public async Task<ActionResult> AddOrder([FromBody]PaymentForWebHookCreationDto paymentForWebHookCreationDto)
+    public async Task<ActionResult> WebHookPayment([FromBody]PaymentForWebHookCreationDto paymentForWebHookCreationDto)
     {
-        return await Task.FromResult(Ok());
+        var command = new CheckPayment.Command(paymentForWebHookCreationDto);
+        await mediator.Send(command);
+        return NoContent();
     }
     
     /// <summary>
@@ -40,7 +47,7 @@ public sealed class PaymentsController: ControllerBase
     public async Task<ActionResult<PaymentDto>> GetPayment(Guid paymentId)
     {
         var query = new GetPayment.Query(paymentId);
-        var queryResponse = await _mediator.Send(query);
+        var queryResponse = await mediator.Send(query);
         return Ok(queryResponse);
     }
 
@@ -52,7 +59,7 @@ public sealed class PaymentsController: ControllerBase
     public async Task<IActionResult> GetPayments([FromQuery] PaymentParametersDto paymentParametersDto)
     {
         var query = new GetPaymentList.Query(paymentParametersDto);
-        var queryResponse = await _mediator.Send(query);
+        var queryResponse = await mediator.Send(query);
 
         var paginationMetadata = new
         {
@@ -67,11 +74,22 @@ public sealed class PaymentsController: ControllerBase
             hasNext = queryResponse.HasNext
         };
 
-        Response.Headers.Add("X-Pagination",
-            JsonSerializer.Serialize(paginationMetadata));
+        Response.Headers.Add("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
 
         return Ok(queryResponse);
     }
-
+    
+    /// <summary>
+    /// Updates an entire existing Payment.
+    /// </summary>
+    [HttpPut("{paymentId:guid}", Name = "UpdatePayment")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    public async Task<IActionResult> UpdatePayment(Guid paymentId, PaymentForUpdateDto payment)
+    {
+        var command = new UpdatePayment.Command(paymentId, payment);
+        await mediator.Send(command);
+        return NoContent();
+    }
+    
     // endpoint marker - do not delete this comment
 }
